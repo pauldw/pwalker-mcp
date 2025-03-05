@@ -1,0 +1,21 @@
+{
+  "name": "pwalker-mcp",
+  "version": "0.0.1",
+  "main": "src/main.ts",
+  "bin": {
+    "dynamic-mcp": "./src/main.ts"
+  },
+  "scripts": {
+    "start": "tsx src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.5.0",
+    "sharp": "^0.33.5",
+    "tsx": "^4.19.2",
+    "zod": "^3.24.2"
+  }
+}
