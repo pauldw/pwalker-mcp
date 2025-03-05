@@ -3,35 +3,19 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { exec } from "child_process";
 
 // Create server instance
 const server = new McpServer({
-  name: "goose-mcp",
-  version: "0.0.2",
+  name: "pwalker-mcp",
+  version: "0.0.1",
 });
 
 const taskQueue: string[] = [];
 
-const runShellCommand = async (command: string[]): Promise<Buffer> => {
-  return new Promise((resolve, reject) => {
-    exec(command.join(" "), { 
-      encoding: 'buffer',
-      maxBuffer: 1024 * 1024 * 10 // 10MB buffer size
-    }, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(stdout);
-      }
-    });
-  });
-};
-
 // Register tools
 server.tool(
   "push-tasks",
-  "Push a list of items to the task queue. Can be retrieved using the 'pop-task' tool.",
+  "Push a list of tasks to the task queue. Can be retrieved using the 'pop-task' tool.",
   {
     tasks: z.array(z.string()).describe("A list of tasks to push to the task queue. Can be retrieved using the 'pop-task' tool."),
   },
@@ -66,7 +50,7 @@ server.tool(
     return {
       content: [{
         type: "text",
-        text: `Task popped: ${task}`
+        text: `${task}`
       }]
     };
   }
@@ -75,7 +59,7 @@ server.tool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("Goose MCP Server running on stdio");
+  console.error("MCP Server running on stdio");
 }
 
 main().catch((error) => {
