@@ -19,7 +19,7 @@ server.tool(
   "Push a list of tasks and/or tasks from a taskfile to the task queue. Tasks can be retrieved using the 'pop-task' tool.",
   {
     tasklist: z.array(z.string()).optional().describe("A list of tasks to push to the task queue."),
-    taskfile: z.string().optional().describe("Absolute path to a file containing newline-separated tasks to push to the task queue."),
+    taskfile: z.string().optional().describe("Absolute path to a file containing newline-separated tasks to push to the task queue. Use this for long lists of tasks."),
   },
   async (args) => {
     let taskCount = 0;
