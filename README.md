@@ -4,7 +4,7 @@ A shifting selection of one-off MCP tools that pwalker is playing with.
 
 Currently contains:
 
-- push-task, which takes a task list and/or file containing newline-separate tasks and adds them to the queue
+- push-tasks, which takes a task list and/or file containing newline-separate tasks and adds them to the queue
 - pop-task, which pops one task from the queue or indicates the queue is empty
 
 ## Goose Installation
