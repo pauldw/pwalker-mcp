@@ -8,7 +8,7 @@ import { spawn, ChildProcess } from 'node:child_process';
 // Create server instance
 const server = new McpServer({
   name: "pwalker-mcp",
-  version: "0.0.5",
+  version: "0.0.6",
 });
 
 const taskQueue: string[] = [];
@@ -118,10 +118,10 @@ server.tool(
 // Background process tools
 // 
 server.tool(
-  "launch-process",
-  "Launch a process with the given command and arguments.",
+  "launch-background-process",
+  "Launch a long-running background process with the given command and arguments. This is useful for processes that run continuously and watch for file changes.",
   {
-    command: z.string().describe("The command to launch."),
+    command: z.string().describe("The long-running command to launch."),
     args: z.array(z.string()).describe("The arguments to pass to the command."),
     cwd: z.string().optional().describe("The working directory in which to execute the command."),
   },
