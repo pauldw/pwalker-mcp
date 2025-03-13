@@ -176,6 +176,23 @@ server.tool(
   }
 );
 
+server.tool(
+  "wait",
+  "Wait for a specified number of seconds before continuing.",
+  {
+    seconds: z.number().min(0).describe("The number of seconds to wait."),
+  },
+  async ({seconds}) => {
+    await new Promise(resolve => setTimeout(resolve, seconds * 1000));
+    return {
+      content: [{
+        type: "text",
+        text: `Waited for ${seconds} seconds.`
+      }]
+    };
+  }
+);
+
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);

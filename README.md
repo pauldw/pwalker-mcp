@@ -9,6 +9,7 @@ Currently contains:
 - launch-process, which launches a shell command in the background
 - get-process-output, which gets the output of a previously launched process
 - kill-process, which kills a previously launched process
+- wait, which waits a specified number of seconds
 
 
 ## Goose Installation
