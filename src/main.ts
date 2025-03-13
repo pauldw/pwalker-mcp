@@ -8,7 +8,7 @@ import { spawn, ChildProcess } from 'node:child_process';
 // Create server instance
 const server = new McpServer({
   name: "pwalker-mcp",
-  version: "0.0.3",
+  version: "0.0.4",
 });
 
 const taskQueue: string[] = [];
@@ -84,9 +84,10 @@ server.tool(
   {
     command: z.string().describe("The command to launch."),
     args: z.array(z.string()).describe("The arguments to pass to the command."),
+    cwd: z.string().optional().describe("The working directory in which to execute the command."),
   },
-  async ({command, args}) => {
-    const child = spawn(command, args);
+  async ({command, args, cwd}) => {
+    const child = spawn(command, args, { cwd });
     const processId = crypto.randomUUID();
     processes[processId] = child;
     // Initialize output storage for this process
