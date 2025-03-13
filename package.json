@@ -1,6 +1,6 @@
 {
   "name": "pwalker-mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/main.ts",
   "bin": {
     "dynamic-mcp": "./src/main.ts"

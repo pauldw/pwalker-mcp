@@ -6,6 +6,10 @@ Currently contains:
 
 - push-tasks, which takes a task list and/or file containing newline-separate tasks and adds them to the queue
 - pop-task, which pops one task from the queue or indicates the queue is empty
+- launch-process, which launches a shell command in the background
+- get-process-output, which gets the output of a previously launched process
+- kill-process, which kills a previously launched process
+
 
 ## Goose Installation
 
