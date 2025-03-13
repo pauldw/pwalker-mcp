@@ -8,14 +8,53 @@ import { spawn, ChildProcess } from 'node:child_process';
 // Create server instance
 const server = new McpServer({
   name: "pwalker-mcp",
-  version: "0.0.4",
+  version: "0.0.5",
 });
 
 const taskQueue: string[] = [];
 
 const processes: { [key: string]: ChildProcess } = {};
 // Add a new data structure to store process output
-const processOutput: { [key: string]: { stdout: string[], stderr: string[] } } = {};
+const processOutput: { [key: string]: { stdout: string[], stderr: string[], exitCode?: number } } = {};
+
+// Function to clean up all child processes
+function cleanupProcesses() {
+  console.error("Cleaning up child processes before exit...");
+  Object.entries(processes).forEach(([id, process]) => {
+    try {
+      if (!process.killed) {
+        console.error(`Killing process ${id}`);
+        process.kill();
+      }
+    } catch (error) {
+      console.error(`Error killing process ${id}:`, error);
+    }
+  });
+}
+
+// Register cleanup handlers for process exit
+process.on('SIGINT', () => {
+  console.error('Received SIGINT signal');
+  cleanupProcesses();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.error('Received SIGTERM signal');
+  cleanupProcesses();
+  process.exit(0);
+});
+
+process.on('exit', () => {
+  cleanupProcesses();
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught exception:', error);
+  cleanupProcesses();
+  process.exit(1);
+});
 
 //
 // Task queue tools
@@ -103,6 +142,20 @@ server.tool(
       console.error(output);
       processOutput[processId].stderr.push(output);
     });
+    
+    // Clean up process references when they exit
+    child.on('exit', (code) => {
+      console.error(`Process ${processId} exited with code ${code}`);
+      // Store the exit code
+      processOutput[processId].exitCode = code !== null ? code : undefined;
+      delete processes[processId];
+    });
+    
+    child.on('error', (err) => {
+      console.error(`Process ${processId} error:`, err);
+      delete processes[processId];
+    });
+
     return {
       content: [{
         type: "text", 
@@ -132,14 +185,25 @@ server.tool(
     const stdout = processOutput[processId].stdout.join("");
     const stderr = processOutput[processId].stderr.join("");
     
+    // Check if the process is still running
+    const isRunning = processes[processId] !== undefined;
+    const exitCode = processOutput[processId].exitCode;
+    
+    let status = isRunning ? "Running" : "Exited";
+    if (!isRunning && exitCode !== undefined) {
+      status = `Exited with code ${exitCode}`;
+    }
+    
     if (clear) {
-      processOutput[processId] = { stdout: [], stderr: [] };
+      // Preserve the exit code even when clearing output
+      const exitCodeToKeep = processOutput[processId].exitCode;
+      processOutput[processId] = { stdout: [], stderr: [], exitCode: exitCodeToKeep };
     }
     
     return {
       content: [{
         type: "text",
-        text: `Process ID: ${processId}\nStatus: ${process.exitCode ? "Exited with code " + process.exitCode : "Running"}\n\nSTDOUT:\n${stdout}\n\nSTDERR:\n${stderr}`
+        text: `Process ID: ${processId}\nStatus: ${status}\n\nSTDOUT:\n${stdout}\n\nSTDERR:\n${stderr}`
       }]
     };
   }
