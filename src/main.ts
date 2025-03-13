@@ -8,7 +8,7 @@ import { spawn, ChildProcess } from 'node:child_process';
 // Create server instance
 const server = new McpServer({
   name: "pwalker-mcp",
-  version: "0.0.2",
+  version: "0.0.3",
 });
 
 const taskQueue: string[] = [];
